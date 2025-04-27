@@ -1,0 +1,41 @@
+<h1>Photo Gallery</h1>
+
+{{
+#each
+ categories}}
+    <h2>{{this}}</h2>
+    <div class="row mb-4">
+        {{
+#with
+ (lookup ../recentPhotos this)}}
+            {{
+#if
+ this.length}}
+                {{
+#each
+ this}}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="{{url}}" class="card-img-top" alt="{{title}}">
+                            <div class="card-body">
+                                <h5>{{title}}</h5>
+                                <p>{{description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{
+/each
+}}
+            {{else}}
+                <p>0 photos in this category.</p>
+            {{
+/if
+}}
+        {{
+/with
+}}
+    </div>
+    <a href="/category/{{this}}" class="btn btn-sm btn-outline-secondary mb-4">View all {{this}}</a>
+{{
+/each
+}}

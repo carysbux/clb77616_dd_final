@@ -1,0 +1,27 @@
+<h1>{{category}}</h1>
+
+<div class="row">
+    {{
+#if
+ photos.length}}
+        {{
+#each
+ photos}}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{url}}" class="card-img-top" alt="{{title}}">
+                    <div class="card-body">
+                        <h5>{{title}}</h5>
+                        <p>{{description}}</p>
+                    </div>
+                </div>
+            </div>
+        {{
+/each
+}}
+    {{else}}
+        <p>0 photos in this category.</p>
+    {{
+/if
+}}
+</div>
