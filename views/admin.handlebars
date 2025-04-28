@@ -1,27 +1,20 @@
-<h1>{{category}}</h1>
+<h1>Admin</h1>
 
 <div class="row">
-    {{
-#if
- photos.length}}
-        {{
-#each
- photos}}
+    {{#if photos.length}}
+        {{#each photos}}
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <img src="{{url}}" class="card-img-top" alt="{{title}}">
                     <div class="card-body">
                         <h5>{{title}}</h5>
-                        <p>{{description}}</p>
+                        <p>Category: {{category}}</p>
+                        <a href="/delete/{{id}}" class="btn btn-danger">Delete</a>
                     </div>
                 </div>
             </div>
-        {{
-/each
-}}
+        {{/each}}
     {{else}}
-        <p>0 photos in this category.</p>
-    {{
-/if
-}}
+        <p>No photos yet.</p>
+    {{/if}}
 </div>
