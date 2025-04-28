@@ -18,7 +18,6 @@ const sequelize = new Sequelize({
 // define model
 const Photo = sequelize.define('Photo', {
     title: DataTypes.STRING,
-    description: DataTypes.TEXT,
     url: DataTypes.STRING,
     category: DataTypes.STRING
 })
@@ -32,9 +31,14 @@ app.use(express.static('public'))
 sequelize.sync()
 
 // initialize handlebars
-const handlebars = require('express-handlebars')
-app.engine('handlebars', handlebars.engine())
-app.set('view engine', 'handlebars')
+const handlebars = require('express-handlebars');
+app.engine('handlebars', handlebars.engine({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}));
+app.set('view engine', 'handlebars');
 
 
 const port = process.env.PORT || 3000
@@ -59,22 +63,24 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // Add routes
-// Home page with 3 recent photos
+// home page with 3 recent photos
 app.get('/', async (req, res) => {
-    const categories = ['Faces', 'Places', 'Things']
-    const recentPhotos = {}
-    
+    const categories = ['Faces', 'Places', 'Things'];
+    const recentPhotos = {};
+
     for (const category of categories) {
         const photos = await Photo.findAll({
             where: { category },
             order: [['createdAt', 'DESC']],
-            limit: 3
-        })
-        recentPhotos[category] = photos
+            limit: 3,
+            raw: true   // <<< THIS FIXES IT!!
+        });
+        recentPhotos[category] = photos;
     }
-    
-    res.render('home', { categories, recentPhotos })
-})
+
+    res.render('home', { categories, recentPhotos });
+});
+
 
 // Category view
 app.get('/category/:category', async (req, res) => {
@@ -94,20 +100,18 @@ app.get('/upload', (req, res) => {
 
 // Handle upload
 app.post('/upload', upload.single('image'), async (req, res) => {
-    const { title, description, category } = req.body
-    
+    const { title, category } = req.body;
     if (!req.file) {
-        return res.status(400).send('No image uploaded')
+        return res.status(400).send('No image uploaded');
     }
-    
+
     const photo = await Photo.create({
         title: title,
-        description: description,
         url: '/uploads/' + req.file.filename,
         category: category
-    })
-    
-    res.redirect('/')
+    });
+
+    res.redirect('/');
 })
 
 // Admin page
